@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QuickQR Pro | Premium QR Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        'pure-black': '#000000',
+                        'electric-blue': '#3B82F6',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'glow': '0 0 20px rgba(59, 130, 246, 0.5)',
+                        'glow-heavy': '0 0 35px rgba(59, 130, 246, 0.7)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #000000;
+            color: #ffffff;
+        }
+
+        .qr-canvas-container canvas {
+            max-width: 100%;
+            height: auto !important;
+            border-radius: 0.75rem;
+        }
+
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .ad-slot {
+            width: 100%;
+            max-width: 728px;
+            min-height: 90px;
+            margin: 2rem auto;
+            border: 1px dashed rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+            border-radius: 0.75rem;
+        }
+
+        @media (max-width: 768px) {
+            .ad-slot {
+                max-width: 320px;
+                min-height: 50px;
+            }
+        }
+
+        .ad-label {
+            font-size: 0.65rem;
+            color: rgba(255, 255, 255, 0.2);
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        input[type="color"] {
+            -webkit-appearance: none;
+            appearance: none;
+            border: none;
+            width: 40px;
+            height: 40px;
+            cursor: pointer;
+            background: transparent;
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+        }
+
+        .error-shake {
+            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+            border-color: #ef4444 !important;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.5) !important;
+        }
+
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-1px, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(2px, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-4px, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(4px, 0, 0);
+            }
+        }
+    </style>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8167884438770174"
+        crossorigin="anonymous"></script>
+</head>
+
+<body class="min-h-screen flex flex-col items-center p-6 md:p-12 overflow-x-hidden">
+
+    <!-- Header -->
+    <header class="w-full max-w-4xl flex justify-between items-center mb-12">
+        <div class="flex items-center gap-3">
+            <div class="w-12 h-12 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                    class="w-10 h-10 text-electric-blue filter drop-shadow(0 0 8px rgba(59, 130, 246, 0.5))"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <rect x="3" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="3" width="7" height="7"></rect>
+                    <rect x="14" y="14" width="7" height="7"></rect>
+                    <rect x="3" y="14" width="7" height="7"></rect>
+                    <line x1="7" y1="7" x2="7" y2="7"></line>
+                    <line x1="17" y1="7" x2="17" y2="7"></line>
+                    <line x1="17" y1="17" x2="17" y2="17"></line>
+                    <line x1="7" y1="17" x2="7" y2="17"></line>
+                </svg>
+            </div>
+            <h1 class="text-2xl font-bold tracking-tight">QuickQR <span class="text-electric-blue">Pro</span></h1>
+        </div>
+
+        <div class="flex items-center gap-4">
+            <select id="langSelector"
+                class="bg-transparent border border-white/10 rounded-lg px-3 py-1 text-sm outline-none hover:border-electric-blue transition-colors cursor-pointer glass-effect">
+                <option value="en" class="bg-black">EN</option>
+                <option value="es" class="bg-black">ES</option>
+            </select>
+        </div>
+    </header>
+
+    <!-- Top Ad Slot -->
+    <div class="ad-slot">
+        <span class="ad-label ad-text">Ads / Anuncio</span>
+    </div>
+
+    <!-- Main Content -->
+    <main class="w-full max-w-2xl flex flex-col gap-8">
+        <!-- Input Section -->
+        <div class="flex flex-col gap-4">
+            <label id="lblUrl" for="urlInput" class="text-white/60 text-sm font-medium ml-1">URL or Text</label>
+            <textarea id="urlInput"
+                class="w-full bg-white/5 border border-white/10 rounded-2xl p-4 min-h-[120px] outline-none focus:border-electric-blue focus:shadow-glow transition-all duration-300 resize-none placeholder:text-white/20"
+                placeholder="https://example.com"></textarea>
+        </div>
+
+        <!-- Controls Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="glass-effect p-6 rounded-2xl flex flex-col gap-4">
+                <div class="flex items-center justify-between">
+                    <label id="lblQrColor" class="text-white/80 font-medium">QR Color</label>
+                    <input type="color" id="qrColor" value="#000000">
+                </div>
+                <div class="flex items-center justify-between">
+                    <label id="lblBgColor" class="text-white/80 font-medium">BG Color</label>
+                    <input type="color" id="bgColor" value="#ffffff">
+                </div>
+            </div>
+
+            <div class="flex flex-col gap-4 justify-center">
+                <button id="btnGenerate"
+                    class="w-full bg-electric-blue hover:opacity-90 text-white font-bold py-4 rounded-2xl shadow-glow hover:shadow-glow-heavy transition-all duration-300 flex items-center justify-center gap-2 active:scale-95">
+                    <span id="txtGenerate">Generate QR</span>
+                </button>
+                <button id="btnDownload"
+                    class="hidden w-full bg-white/10 hover:bg-white/20 text-white font-bold py-4 rounded-2xl border border-white/10 transition-all duration-300 flex items-center justify-center gap-2 active:scale-95">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"
+                            clip-rule="evenodd" />
+                    </svg>
+                    <span id="txtDownload">Download PNG</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Preview Area -->
+        <div id="previewArea" class="mt-8 flex flex-col items-center gap-6">
+            <div id="qrcode"
+                class="qr-canvas-container bg-white p-4 rounded-2xl shadow-2xl opacity-0 scale-95 transition-all duration-500">
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Ad Slot -->
+    <div class="ad-slot">
+        <span class="ad-label ad-text">Ads / Anuncio</span>
+    </div>
+
+    <!-- Footer -->
+    <footer class="mt-auto pt-12 text-white/20 text-sm">
+        <p>&copy; 2024 QuickQR Pro &bull; <span id="txtPrivacy">100% Client-Side Encryption</span></p>
+    </footer>
+
+    <script>
+        const i18n = {
+            en: {
+                lblUrl: "Enter URL or Text",
+                placeholder: "https://example.com",
+                lblQrColor: "QR Color",
+                lblBgColor: "BG Color",
+                btnGenerate: "Generate QR Code",
+                btnDownload: "Download PNG",
+                txtPrivacy: "100% Client-Side & Private",
+                errorEmpty: "Please enter a valid URL or text",
+                txtAds: "Ads"
+            },
+            es: {
+                lblUrl: "Ingresa URL o Texto",
+                placeholder: "https://ejemplo.com",
+                lblQrColor: "Color QR",
+                lblBgColor: "Color Fondo",
+                btnGenerate: "Generar Código QR",
+                btnDownload: "Descargar PNG",
+                txtPrivacy: "100% Local y Privado",
+                errorEmpty: "Por favor ingresa una URL o texto válido",
+                txtAds: "Anuncio"
+            }
+        };
+
+        let currentLang = 'en';
+        const urlInput = document.getElementById('urlInput');
+        const qrColorInput = document.getElementById('qrColor');
+        const bgColorInput = document.getElementById('bgColor');
+        const btnGenerate = document.getElementById('btnGenerate');
+        const btnDownload = document.getElementById('btnDownload');
+        const qrContainer = document.getElementById('qrcode');
+        const langSelector = document.getElementById('langSelector');
+
+        function updateLanguage(lang) {
+            currentLang = lang;
+            document.getElementById('lblUrl').innerText = i18n[lang].lblUrl;
+            urlInput.placeholder = i18n[lang].placeholder;
+            document.getElementById('lblQrColor').innerText = i18n[lang].lblQrColor;
+            document.getElementById('lblBgColor').innerText = i18n[lang].lblBgColor;
+            document.getElementById('txtGenerate').innerText = i18n[lang].btnGenerate;
+            document.getElementById('txtDownload').innerText = i18n[lang].btnDownload;
+            document.getElementById('txtPrivacy').innerText = i18n[lang].txtPrivacy;
+
+            // Update ad labels
+            document.querySelectorAll('.ad-text').forEach(el => {
+                el.innerText = i18n[lang].txtAds;
+            });
+
+            localStorage.setItem('quickqr-lang', lang);
+            langSelector.value = lang;
+        }
+
+        // Initialize Language
+        const savedLang = localStorage.getItem('quickqr-lang');
+        const browserLang = navigator.language.split('-')[0];
+        const defaultLang = savedLang || (i18n[browserLang] ? browserLang : 'en');
+        updateLanguage(defaultLang);
+
+        langSelector.addEventListener('change', (e) => updateLanguage(e.target.value));
+
+        let qrcode = null;
+
+        btnGenerate.addEventListener('click', () => {
+            const url = urlInput.value.trim();
+
+            if (!url) {
+                urlInput.classList.add('error-shake');
+                setTimeout(() => urlInput.classList.remove('error-shake'), 500);
+                return;
+            }
+
+            // Clear previous QR
+            qrContainer.innerHTML = '';
+            qrContainer.style.backgroundColor = bgColorInput.value;
+
+            // Generate QR
+            qrcode = new QRCode(qrContainer, {
+                text: url,
+                width: 256,
+                height: 256,
+                colorDark: qrColorInput.value,
+                colorLight: bgColorInput.value,
+                correctLevel: QRCode.CorrectLevel.H
+            });
+
+            // Show animation
+            setTimeout(() => {
+                qrContainer.classList.remove('opacity-0', 'scale-95');
+                qrContainer.classList.add('opacity-100', 'scale-100');
+                btnDownload.classList.remove('hidden');
+            }, 50);
+        });
+
+        btnDownload.addEventListener('click', () => {
+            const canvas = qrContainer.querySelector('canvas');
+            if (canvas) {
+                const dataURL = canvas.toDataURL("image/png");
+                const link = document.createElement('a');
+                link.download = `QuickQR_${Date.now()}.png`;
+                link.href = dataURL;
+                link.click();
+            }
+        });
+
+        // Remove error state on input
+        urlInput.addEventListener('input', () => {
+            urlInput.classList.remove('error-shake');
+        });
+    </script>
+</body>
+
+</html>
